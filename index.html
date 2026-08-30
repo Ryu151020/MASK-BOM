@@ -1541,8 +1541,14 @@ function closeAllMsel(){
   document.querySelectorAll('.msel-panel').forEach(p => p.classList.remove('open'));
 }
 document.addEventListener('click', closeAllMsel);
-// Dropdown neo theo vị trí nút bấm (position:fixed) nên khi cuộn thì đóng lại để tránh lệch vị trí
-window.addEventListener('scroll', closeAllMsel, true);
+// Dropdown neo theo vị trí nút bấm (position:fixed) nên khi cuộn TRANG thì đóng lại để tránh lệch vị trí.
+// Lưu ý: phải bỏ qua sự kiện cuộn phát sinh từ chính bên trong panel (vd: kéo thanh cuộn của danh sách
+// checkbox .msel-list) — nếu không, dùng capture:true sẽ bắt luôn cuộn nội bộ đó và đóng panel ngay lập tức,
+// khiến người dùng không thể cuộn/kéo bên trong ô lọc (bấm vào là panel biến mất).
+window.addEventListener('scroll', e => {
+  if(e.target && e.target.closest && e.target.closest('.msel-panel')) return;
+  closeAllMsel();
+}, true);
 window.addEventListener('resize', closeAllMsel);
 
 function positionMselPanel(btn, panel){
